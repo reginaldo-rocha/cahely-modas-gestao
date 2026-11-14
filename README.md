@@ -32,6 +32,9 @@ Desenvolver uma solução simples e funcional para organizar as operações da l
 
 ## 🏗️ Arquitetura e funcionamento
 
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/84ac8fd8-e930-4c82-b499-c758d669071a" />
+
+
 A aplicação funciona diretamente no navegador, utilizando JavaScript para as regras de negócio e LocalStorage para persistência dos dados.
 
 Não utiliza atualmente um banco de dados em nuvem ou backend.
