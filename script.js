@@ -142,6 +142,52 @@ function botoesAcoes(tipo, id) {
 }
 
 /* FORNECEDORES */
+/* CADASTRO DE PRODUTOS */
+
+document.getElementById("formProduto").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const nome = document.getElementById("nomeProduto").value.trim();
+    const categoria = document.getElementById("categoriaProduto").value;
+    const tamanho = document.getElementById("tamanhoProduto").value.trim();
+    const cor = document.getElementById("corProduto").value.trim();
+    const preco = Number(document.getElementById("precoProduto").value);
+
+    if (!nome || !categoria || preco <= 0) {
+        alert("Preencha o nome, a categoria e um preço válido.");
+        return;
+    }
+
+    dados.produtos.push({
+        id: Database.gerarId(),
+        nome,
+        categoria,
+        tamanho,
+        cor,
+        preco
+    });
+
+    if (!salvarDados()) return;
+
+    this.reset();
+    listarProdutos();
+    mostrarMensagem("Produto cadastrado com sucesso!");
+});
+
+function listarProdutos() {
+    const lista = document.getElementById("listaProdutos");
+
+    lista.innerHTML = dados.produtos.map(p => `
+        <tr>
+            <td>${escapar(p.nome)}</td>
+            <td>${escapar(p.categoria)}</td>
+            <td>${escapar(p.tamanho || "-")}</td>
+            <td>${escapar(p.cor || "-")}</td>
+            <td>${dinheiro(p.preco)}</td>
+            <td>${botoesAcoes("produto", p.id)}</td>
+        </tr>
+    `).join("");
+}
 
 document.getElementById("formFornecedor").addEventListener("submit", function (e) {
     e.preventDefault();
@@ -416,6 +462,59 @@ function listarDespesas() {
                 <td>${botoesAcoes("despesa", d.id)}</td>
             </tr>
         `).join("");
+}
+function editarProduto(id) {
+    const p = dados.produtos.find(item => item.id === id);
+    if (!p) return;
+
+    const nome = prompt("Nome do produto:", p.nome);
+    if (nome === null) return;
+
+    if (!nome.trim()) {
+        alert("O nome não pode ficar vazio.");
+        return;
+    }
+
+    const categoria = prompt("Categoria:", p.categoria);
+    if (categoria === null) return;
+
+    const tamanho = prompt("Tamanho:", p.tamanho || "");
+    if (tamanho === null) return;
+
+    const cor = prompt("Cor:", p.cor || "");
+    if (cor === null) return;
+
+    const preco = Number(prompt("Preço de venda (R$):", p.preco));
+
+    if (!Number.isFinite(preco) || preco <= 0) {
+        alert("Informe um preço válido.");
+        return;
+    }
+
+    p.nome = nome.trim();
+    p.categoria = categoria.trim();
+    p.tamanho = tamanho.trim();
+    p.cor = cor.trim();
+    p.preco = preco;
+
+    if (!salvarDados()) return;
+
+    atualizarSistema();
+    mostrarMensagem("Produto atualizado!");
+}
+
+function excluirProduto(id) {
+    const p = dados.produtos.find(item => item.id === id);
+    if (!p) return;
+
+    if (!confirm("Deseja realmente excluir este produto do cadastro?")) return;
+
+    dados.produtos = dados.produtos.filter(item => item.id !== id);
+
+    if (!salvarDados()) return;
+
+    atualizarSistema();
+    mostrarMensagem("Produto excluído!");
 }
 
 /* EDIÇÃO E EXCLUSÃO */
@@ -780,7 +879,11 @@ document.addEventListener("click", function (e) {
 
     if (!id) return;
 
-    const funcoes = {
+    const funcoes = {produto: {
+    editar: editarProduto,
+    excluir: excluirProduto
+    
+},
         fornecedor: {
             editar: editarFornecedor,
             excluir: excluirFornecedor
@@ -873,6 +976,7 @@ document.getElementById("btnExportarCSV").addEventListener("click", function () 
 /* ATUALIZAÇÃO GERAL */
 
 function atualizarSistema() {
+    listarProdutos();
     listarFornecedores();
     listarEstoque();
     atualizarProdutosVenda();

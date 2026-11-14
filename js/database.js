@@ -2,10 +2,10 @@
 const Database = {
     STORAGE_KEY: "cahelyModasDB",
 
-    // Estrutura inicial do sistema
     dadosVazios() {
         return {
             fornecedores: [],
+            produtos: [],
             pecas: [],
             vendas: [],
             pagamentos: [],
@@ -13,7 +13,6 @@ const Database = {
         };
     },
 
-    // Carrega os dados do navegador
     carregar() {
         try {
             const armazenado = localStorage.getItem(this.STORAGE_KEY);
@@ -25,20 +24,12 @@ const Database = {
             const dados = JSON.parse(armazenado);
 
             return {
-                fornecedores: Array.isArray(dados.fornecedores)
-                    ? dados.fornecedores : [],
-
-                pecas: Array.isArray(dados.pecas)
-                    ? dados.pecas : [],
-
-                vendas: Array.isArray(dados.vendas)
-                    ? dados.vendas : [],
-
-                pagamentos: Array.isArray(dados.pagamentos)
-                    ? dados.pagamentos : [],
-
-                despesas: Array.isArray(dados.despesas)
-                    ? dados.despesas : []
+                fornecedores: Array.isArray(dados.fornecedores) ? dados.fornecedores : [],
+                produtos: Array.isArray(dados.produtos) ? dados.produtos : [],
+                pecas: Array.isArray(dados.pecas) ? dados.pecas : [],
+                vendas: Array.isArray(dados.vendas) ? dados.vendas : [],
+                pagamentos: Array.isArray(dados.pagamentos) ? dados.pagamentos : [],
+                despesas: Array.isArray(dados.despesas) ? dados.despesas : []
             };
 
         } catch (erro) {
@@ -48,7 +39,6 @@ const Database = {
         }
     },
 
-    // Salva os dados no navegador
     salvar(dados) {
         try {
             localStorage.setItem(
@@ -65,13 +55,11 @@ const Database = {
         }
     },
 
-    // Gera identificador único
     gerarId() {
         return Date.now().toString(36) +
             Math.random().toString(36).substring(2, 9);
     },
 
-    // Exporta backup completo
     exportarBackup() {
         const dados = this.carregar();
 
@@ -81,10 +69,8 @@ const Database = {
         );
 
         const link = document.createElement("a");
-
         link.href = URL.createObjectURL(arquivo);
         link.download = "backup-cahely-modas.json";
-
         link.click();
 
         URL.revokeObjectURL(link.href);
