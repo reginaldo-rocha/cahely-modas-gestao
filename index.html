@@ -1,0 +1,300 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cahely Modas | Controle da Loja</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topo">
+    <div>
+        <h1>Cahely <span>Modas</span></h1>
+        <p>Controle de consignados e financeiro</p>
+    </div>
+    <button id="btnBackup">Exportar backup</button>
+</header>
+
+<div class="layout">
+    <aside class="menu">
+        <h3>MENU PRINCIPAL</h3>
+        <button class="menu-item active" data-page="dashboard">Dashboard</button>
+        <button class="menu-item" data-page="fornecedores">Fornecedores</button>
+        <button class="menu-item" data-page="entradas">Entrada de roupas</button>
+        <button class="menu-item" data-page="vendas">Vendas</button>
+        <button class="menu-item" data-page="acertos">Acerto de fornecedores</button>
+        <button class="menu-item" data-page="financeiro">Financeiro</button>
+        <button class="menu-item" data-page="relatorios">Relatórios</button>
+    </aside>
+
+    <main class="conteudo">
+
+        <section id="dashboard" class="pagina ativa">
+            <h2>Dashboard</h2>
+            <p>Visão geral da loja</p>
+
+            <div class="indicadores">
+                <div class="card">
+                    <span>Total vendido</span>
+                    <strong id="totalVendido">R$ 0,00</strong>
+                </div>
+                <div class="card">
+                    <span>Peças disponíveis</span>
+                    <strong id="totalEstoque">0</strong>
+                </div>
+                <div class="card">
+                    <span>Fornecedores</span>
+                    <strong id="totalFornecedores">0</strong>
+                </div>
+                <div class="card">
+                    <span>A pagar aos fornecedores</span>
+                    <strong id="totalDevido">R$ 0,00</strong>
+                </div>
+                <div class="card">
+                    <span>Lucro bruto</span>
+                    <strong id="lucroBruto">R$ 0,00</strong>
+                </div>
+                <div class="card">
+                    <span>Saldo financeiro</span>
+                    <strong id="saldoFinanceiro">R$ 0,00</strong>
+                </div>
+            </div>
+
+            <div class="painel">
+                <h3>Bem-vinda à Cahely Modas!</h3>
+                <p>Utilize o menu para controlar fornecedores, roupas consignadas, vendas e financeiro.</p>
+            </div>
+        </section>
+
+        <section id="fornecedores" class="pagina">
+            <h2>Fornecedores</h2>
+            <div class="painel">
+                <h3>Cadastrar fornecedor</h3>
+                <form id="formFornecedor">
+                    <label>Nome do fornecedor</label>
+                    <input id="nomeFornecedor" required>
+                    <label>Telefone</label>
+                    <input id="telefoneFornecedor">
+                    <label>Observações</label>
+                    <input id="obsFornecedor">
+                    <button type="submit">Cadastrar fornecedor</button>
+                </form>
+            </div>
+            <div class="painel">
+                <h3>Fornecedores cadastrados</h3>
+                <div class="tabela"><table>
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Telefone</th>
+                            <th>Observações</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaFornecedores"></tbody>
+                </table></div>
+            </div>
+        </section>
+
+        <section id="entradas" class="pagina">
+            <h2>Entrada de roupas</h2>
+            <div class="painel">
+                <h3>Registrar mercadoria consignada</h3>
+                <form id="formEntrada">
+                    <label>Fornecedor</label>
+                    <select id="fornecedorEntrada" required></select>
+                    <label>Produto</label>
+                    <input id="produtoEntrada" required>
+                    <label>Quantidade recebida</label>
+                    <input id="quantidadeEntrada" type="number" min="1" required>
+                    <label>Custo por peça (R$)</label>
+                    <input id="custoEntrada" type="number" min="0.01" step="0.01" required>
+                    <label>Preço de venda por peça (R$)</label>
+                    <input id="precoEntrada" type="number" min="0.01" step="0.01" required>
+                    <button type="submit">Registrar entrada</button>
+                </form>
+            </div>
+            <div class="painel">
+                <h3>Estoque consignado</h3>
+                <div class="tabela"><table>
+                    <thead>
+                        <tr>
+                            <th>Fornecedor</th>
+                            <th>Produto</th>
+                            <th>Recebidas</th>
+                            <th>Vendidas</th>
+                            <th>Disponíveis</th>
+                            <th>Custo</th>
+                            <th>Venda</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaEstoque"></tbody>
+                </table></div>
+            </div>
+        </section>
+
+        <section id="vendas" class="pagina">
+            <h2>Vendas</h2>
+            <div class="painel">
+                <h3>Registrar venda</h3>
+                <form id="formVenda">
+                    <label>Produto</label>
+                    <select id="produtoVenda" required></select>
+                    <label>Quantidade</label>
+                    <input id="quantidadeVenda" type="number" min="1" required>
+                    <label>Forma de pagamento</label>
+                    <select id="pagamentoVenda" required>
+                        <option value="">Selecione</option>
+                        <option>Pix</option>
+                        <option>Dinheiro</option>
+                        <option>Cartão de débito</option>
+                        <option>Cartão de crédito</option>
+                        <option>Transferência</option>
+                    </select>
+                    <button type="submit">Registrar venda</button>
+                </form>
+            </div>
+            <div class="painel">
+                <h3>Histórico de vendas</h3>
+                <div class="tabela"><table>
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Produto</th>
+                            <th>Fornecedor</th>
+                            <th>Quantidade</th>
+                            <th>Total</th>
+                            <th>Pagamento</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaVendas"></tbody>
+                </table></div>
+            </div>
+        </section>
+
+        <section id="acertos" class="pagina">
+            <h2>Acerto de fornecedores</h2>
+            <div class="painel">
+                <h3>Registrar pagamento</h3>
+                <form id="formAcerto">
+                    <label>Fornecedor</label>
+                    <select id="fornecedorAcerto" required></select>
+                    <label>Valor pago (R$)</label>
+                    <input id="valorAcerto" type="number" min="0.01" step="0.01" required>
+                    <label>Data</label>
+                    <input id="dataAcerto" type="date" required>
+                    <label>Observação</label>
+                    <input id="obsAcerto">
+                    <button type="submit">Registrar pagamento</button>
+                </form>
+            </div>
+            <div class="painel">
+                <h3>Resumo dos fornecedores</h3>
+                <div class="tabela"><table>
+                    <thead>
+                        <tr>
+                            <th>Fornecedor</th>
+                            <th>Custo vendido</th>
+                            <th>Pago</th>
+                            <th>Saldo devido</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resumoAcertos"></tbody>
+                </table></div>
+            </div>
+            <div class="painel">
+                <h3>Histórico de pagamentos</h3>
+                <div class="tabela"><table>
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Fornecedor</th>
+                            <th>Valor pago</th>
+                            <th>Observação</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaPagamentos"></tbody>
+                </table></div>
+            </div>
+        </section>
+
+        <section id="financeiro" class="pagina">
+            <h2>Financeiro</h2>
+            <div class="indicadores">
+                <div class="card">
+                    <span>Entradas de vendas</span>
+                    <strong id="financeiroEntradas">R$ 0,00</strong>
+                </div>
+                <div class="card">
+                    <span>Pagamentos a fornecedores</span>
+                    <strong id="financeiroPagamentos">R$ 0,00</strong>
+                </div>
+                <div class="card">
+                    <span>Despesas da loja</span>
+                    <strong id="financeiroDespesas">R$ 0,00</strong>
+                </div>
+                <div class="card">
+                    <span>Saldo</span>
+                    <strong id="financeiroSaldo">R$ 0,00</strong>
+                </div>
+            </div>
+            <div class="painel">
+                <h3>Registrar despesa</h3>
+                <form id="formDespesa">
+                    <label>Descrição</label>
+                    <input id="descricaoDespesa" required>
+                    <label>Categoria</label>
+                    <select id="categoriaDespesa">
+                        <option>Embalagens</option>
+                        <option>Aluguel</option>
+                        <option>Transporte</option>
+                        <option>Contas</option>
+                        <option>Marketing</option>
+                        <option>Outros</option>
+                    </select>
+                    <label>Valor (R$)</label>
+                    <input id="valorDespesa" type="number" min="0.01" step="0.01" required>
+                    <label>Data</label>
+                    <input id="dataDespesa" type="date" required>
+                    <button type="submit">Registrar despesa</button>
+                </form>
+            </div>
+            <div class="painel">
+                <h3>Despesas registradas</h3>
+                <div class="tabela"><table>
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Descrição</th>
+                            <th>Categoria</th>
+                            <th>Valor</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaDespesas"></tbody>
+                </table></div>
+            </div>
+        </section>
+
+        <section id="relatorios" class="pagina">
+            <h2>Relatórios</h2>
+            <div class="painel">
+                <h3>Resumo da loja</h3>
+                <div id="resumoRelatorio"></div>
+                <button type="button" id="btnExportarCSV">Exportar vendas CSV</button>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<div id="mensagem"></div>
+<script src="js/database.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
