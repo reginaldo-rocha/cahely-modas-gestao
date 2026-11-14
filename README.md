@@ -55,7 +55,14 @@ Cahely-Modas-Novo/
 
 ## 📸 Evidências do projeto
 
-As imagens da pasta `Evidencias` documentam etapas do desenvolvimento, funcionalidades e melhorias implementadas.
+<img width="1845" height="1017" alt="image" src="https://github.com/user-attachments/assets/cb77ea18-ca30-4945-8662-102286ad3cb3" />
+
+<img width="1901" height="892" alt="image" src="https://github.com/user-attachments/assets/0a362831-2495-4557-b288-8050b08b83fd" />
+
+<img width="1905" height="903" alt="image" src="https://github.com/user-attachments/assets/93ec3a24-9077-4d60-82bd-07b5bd18c649" />
+
+<img width="1897" height="837" alt="image" src="https://github.com/user-attachments/assets/4390c029-a06d-4cd8-9b9e-e55d4c690a66" />
+
 
 ## 🚀 Execução local
 
