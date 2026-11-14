@@ -1,4 +1,3 @@
-
 let dados = Database.carregar();
 
 if (!dados) dados = Database.dadosVazios();
@@ -288,34 +287,34 @@ function listarEstoque() {
         `;
     }).join("");
 }
+/* VENDAS - DIGITAÇÃO LIVRE */
 
-/* VENDAS */
-
+// As vendas digitadas livremente não dependem do cadastro de produtos
+// e não movimentam o estoque consignado.
 function atualizarProdutosVenda() {
-    const select = document.getElementById("produtoVenda");
-
-    const disponiveis = dados.pecas.filter(p => estoqueDaPeca(p) > 0);
-
-    select.innerHTML = '<option value="">Selecione um produto</option>' +
-        disponiveis.map(p => `
-            <option value="${p.id}">
-                ${escapar(p.produto)} - ${escapar(nomeFornecedor(p.fornecedorId))}
-                (${estoqueDaPeca(p)} disponíveis)
-            </option>
-        `).join("");
+    // Mantida para compatibilidade com atualizarSistema().
 }
 
 document.getElementById("formVenda").addEventListener("submit", function (e) {
     e.preventDefault();
 
-    const pecaId = document.getElementById("produtoVenda").value;
+    const produto = document.getElementById("produtoVenda").value.trim();
     const quantidade = Number(document.getElementById("quantidadeVenda").value);
+    const preco = Number(document.getElementById("precoVenda").value);
     const pagamento = document.getElementById("pagamentoVenda").value;
 
-    const peca = dados.pecas.find(p => p.id === pecaId);
+    if (!produto) {
+        alert("Digite o nome do produto.");
+        return;
+    }
 
-    if (!peca || quantidade <= 0 || quantidade > estoqueDaPeca(peca)) {
-        alert("Quantidade indisponível no estoque.");
+    if (!Number.isInteger(quantidade) || quantidade <= 0) {
+        alert("Informe uma quantidade inteira válida.");
+        return;
+    }
+
+    if (!Number.isFinite(preco) || preco <= 0) {
+        alert("Informe um preço válido.");
         return;
     }
 
@@ -326,13 +325,13 @@ document.getElementById("formVenda").addEventListener("submit", function (e) {
 
     dados.vendas.push({
         id: Database.gerarId(),
-        pecaId,
-        fornecedorId: peca.fornecedorId,
-        produto: peca.produto,
+        pecaId: null,
+        fornecedorId: null,
+        produto,
         quantidade,
-        custo: peca.custo,
-        preco: peca.preco,
-        total: quantidade * peca.preco,
+        custo: 0,
+        preco,
+        total: quantidade * preco,
         pagamento,
         data: hoje()
     });
@@ -351,7 +350,7 @@ function listarVendas() {
         <tr>
             <td>${formatarData(v.data)}</td>
             <td>${escapar(v.produto)}</td>
-            <td>${escapar(nomeFornecedor(v.fornecedorId))}</td>
+            <td>${v.fornecedorId ? escapar(nomeFornecedor(v.fornecedorId)) : "-"}</td>
             <td>${v.quantidade}</td>
             <td>${dinheiro(v.total)}</td>
             <td>${escapar(v.pagamento)}</td>
@@ -463,6 +462,7 @@ function listarDespesas() {
             </tr>
         `).join("");
 }
+
 function editarProduto(id) {
     const p = dados.produtos.find(item => item.id === id);
     if (!p) return;
@@ -565,7 +565,6 @@ function excluirFornecedor(id) {
     atualizarSistema();
     mostrarMensagem("Fornecedor excluído!");
 }
-
 function editarPeca(id) {
     const p = dados.pecas.find(item => item.id === id);
     if (!p) return;
@@ -657,25 +656,6 @@ function editarVenda(id) {
     const v = dados.vendas.find(item => item.id === id);
     if (!v) return;
 
-    const peca = dados.pecas.find(p => p.id === v.pecaId);
-
-    if (!peca) {
-        alert("Não foi possível localizar o produto desta venda.");
-        return;
-    }
-
-    const quantidadeDisponivel = estoqueDaPeca(peca) + Number(v.quantidade);
-
-    const quantidade = Number(prompt(
-        "Quantidade vendida:",
-        v.quantidade
-    ));
-
-    if (!Number.isInteger(quantidade) || quantidade <= 0 || quantidade > quantidadeDisponivel) {
-        alert("Quantidade inválida. Disponível para esta alteração: " + quantidadeDisponivel);
-        return;
-    }
-
     const formas = [
         "Pix",
         "Dinheiro",
@@ -684,13 +664,69 @@ function editarVenda(id) {
         "Transferência"
     ];
 
+    // Venda livre: permite alterar nome, quantidade, preço e pagamento.
+    if (!v.pecaId) {
+        const produto = prompt("Nome do produto:", v.produto);
+        if (produto === null) return;
+        if (!produto.trim()) {
+            alert("O nome do produto não pode ficar vazio.");
+            return;
+        }
+
+        const quantidade = Number(prompt("Quantidade vendida:", v.quantidade));
+        if (!Number.isInteger(quantidade) || quantidade <= 0) {
+            alert("Informe uma quantidade inteira válida.");
+            return;
+        }
+
+        const preco = Number(prompt("Preço unitário (R$):", v.preco));
+        if (!Number.isFinite(preco) || preco <= 0) {
+            alert("Informe um preço válido.");
+            return;
+        }
+
+        const pagamento = prompt(
+            "Forma de pagamento:\n" + formas.join("\n"),
+            v.pagamento
+        );
+        if (pagamento === null) return;
+        if (!formas.includes(pagamento)) {
+            alert("Forma de pagamento inválida.");
+            return;
+        }
+
+        v.produto = produto.trim();
+        v.quantidade = quantidade;
+        v.preco = preco;
+        v.total = quantidade * preco;
+        v.pagamento = pagamento;
+
+        if (!salvarDados()) return;
+        atualizarSistema();
+        mostrarMensagem("Venda atualizada!");
+        return;
+    }
+
+    // Mantém a edição das vendas antigas vinculadas ao estoque.
+    const peca = dados.pecas.find(p => p.id === v.pecaId);
+    if (!peca) {
+        alert("Não foi possível localizar o produto desta venda.");
+        return;
+    }
+
+    const quantidadeDisponivel = estoqueDaPeca(peca) + Number(v.quantidade);
+    const quantidade = Number(prompt("Quantidade vendida:", v.quantidade));
+
+    if (!Number.isInteger(quantidade) || quantidade <= 0 || quantidade > quantidadeDisponivel) {
+        alert("Quantidade inválida. Disponível para esta alteração: " + quantidadeDisponivel);
+        return;
+    }
+
     const pagamento = prompt(
         "Forma de pagamento:\n" + formas.join("\n"),
         v.pagamento
     );
-
     if (pagamento === null) return;
-
     if (!formas.includes(pagamento)) {
         alert("Forma de pagamento inválida.");
         return;
@@ -699,10 +735,7 @@ function editarVenda(id) {
     const custoTotalNovo = custoVendidoDepoisDaAlteracao(
         v.fornecedorId,
         v.id,
-        {
-            quantidade,
-            custo: v.custo
-        }
+        { quantidade, custo: v.custo }
     );
 
     if (totalPago(v.fornecedorId) > custoTotalNovo) {
@@ -715,7 +748,6 @@ function editarVenda(id) {
     v.total = quantidade * Number(v.preco);
 
     if (!salvarDados()) return;
-
     atualizarSistema();
     mostrarMensagem("Venda atualizada!");
 }
@@ -724,26 +756,29 @@ function excluirVenda(id) {
     const v = dados.vendas.find(item => item.id === id);
     if (!v) return;
 
-    const custoRestante = custoVendidoDepoisDaAlteracao(
-        v.fornecedorId,
-        v.id
-    );
+    // Só valida saldo de fornecedor para vendas antigas vinculadas ao estoque.
+    if (v.fornecedorId) {
+        const custoRestante = custoVendidoDepoisDaAlteracao(v.fornecedorId, v.id);
 
-    if (totalPago(v.fornecedorId) > custoRestante) {
-        alert("Não é possível excluir esta venda porque os pagamentos já realizados superariam o custo restante do fornecedor.");
-        return;
+        if (totalPago(v.fornecedorId) > custoRestante) {
+            alert("Não é possível excluir esta venda porque os pagamentos já realizados superariam o custo restante do fornecedor.");
+            return;
+        }
     }
 
-    if (!confirm("Deseja realmente excluir esta venda? O estoque será atualizado automaticamente.")) {
-        return;
-    }
+    const mensagem = v.pecaId
+        ? "Deseja realmente excluir esta venda? O estoque será atualizado automaticamente."
+        : "Deseja realmente excluir esta venda?";
+
+    if (!confirm(mensagem)) return;
 
     dados.vendas = dados.vendas.filter(item => item.id !== id);
 
     if (!salvarDados()) return;
-
     atualizarSistema();
-    mostrarMensagem("Venda excluída e estoque atualizado!");
+    mostrarMensagem(v.pecaId
+        ? "Venda excluída e estoque atualizado!"
+        : "Venda excluída!");
 }
 
 function editarPagamento(id) {
@@ -780,8 +815,7 @@ function editarPagamento(id) {
     p.obs = obs.trim();
 
     if (!salvarDados()) return;
-
-    atualizarSistema();
+        atualizarSistema();
     mostrarMensagem("Pagamento atualizado!");
 }
 
@@ -879,11 +913,11 @@ document.addEventListener("click", function (e) {
 
     if (!id) return;
 
-    const funcoes = {produto: {
-    editar: editarProduto,
-    excluir: excluirProduto
-    
-},
+    const funcoes = {
+        produto: {
+            editar: editarProduto,
+            excluir: excluirProduto
+        },
         fornecedor: {
             editar: editarFornecedor,
             excluir: excluirFornecedor
@@ -952,7 +986,7 @@ document.getElementById("btnExportarCSV").addEventListener("click", function () 
         ...dados.vendas.map(v => [
             v.data,
             v.produto,
-            nomeFornecedor(v.fornecedorId),
+            v.fornecedorId ? nomeFornecedor(v.fornecedorId) : "-",
             v.quantidade,
             v.total,
             v.pagamento

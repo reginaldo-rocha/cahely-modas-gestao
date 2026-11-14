@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -169,6 +170,7 @@
 
             <div class="painel">
                 <h3>Registrar mercadoria consignada</h3>
+
                 <form id="formEntrada">
                     <label>Fornecedor</label>
                     <select id="fornecedorEntrada" required></select>
@@ -217,12 +219,33 @@
 
             <div class="painel">
                 <h3>Registrar venda</h3>
+
                 <form id="formVenda">
                     <label>Produto</label>
-                    <select id="produtoVenda" required></select>
+                    <input
+                        type="text"
+                        id="produtoVenda"
+                        placeholder="Digite o nome do produto"
+                        required
+                    >
 
                     <label>Quantidade</label>
-                    <input id="quantidadeVenda" type="number" min="1" required>
+                    <input
+                        id="quantidadeVenda"
+                        type="number"
+                        min="1"
+                        step="1"
+                        required
+                    >
+
+                    <label>Preço unitário (R$)</label>
+                    <input
+                        id="precoVenda"
+                        type="number"
+                        min="0.01"
+                        step="0.01"
+                        required
+                    >
 
                     <label>Forma de pagamento</label>
                     <select id="pagamentoVenda" required>
@@ -265,6 +288,7 @@
 
             <div class="painel">
                 <h3>Registrar pagamento</h3>
+
                 <form id="formAcerto">
                     <label>Fornecedor</label>
                     <select id="fornecedorAcerto" required></select>
@@ -327,14 +351,17 @@
                     <span>Entradas de vendas</span>
                     <strong id="financeiroEntradas">R$ 0,00</strong>
                 </div>
+
                 <div class="card">
                     <span>Pagamentos a fornecedores</span>
                     <strong id="financeiroPagamentos">R$ 0,00</strong>
                 </div>
+
                 <div class="card">
                     <span>Despesas da loja</span>
                     <strong id="financeiroDespesas">R$ 0,00</strong>
                 </div>
+
                 <div class="card">
                     <span>Saldo</span>
                     <strong id="financeiroSaldo">R$ 0,00</strong>
@@ -343,6 +370,7 @@
 
             <div class="painel">
                 <h3>Registrar despesa</h3>
+
                 <form id="formDespesa">
                     <label>Descrição</label>
                     <input id="descricaoDespesa" required>
