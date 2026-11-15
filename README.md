@@ -74,7 +74,7 @@ Cahely-Modas-Novo/
 2. Abra a pasta do projeto.
 3. Execute o arquivo `index.html` no navegador.
 
-## 🔮 Melhorias futuras
+## 🔮 O que pode melhorar no futuro
 
 - Implementação de backend e banco de dados centralizado.
 - Autenticação de usuários.
