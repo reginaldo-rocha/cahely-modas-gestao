@@ -1,6 +1,7 @@
 
 # 🛍️ Cahely Modas — Sistema de Gestão
-<img width="1891" height="883" alt="image" src="https://github.com/user-attachments/assets/194ea599-5be1-42f0-8c63-281e0bf6b82e" />
+<img width="1907" height="877" alt="image" src="https://github.com/user-attachments/assets/abd6f2bd-918b-479a-a726-700ff34e0ed7" />
+
 
 
 Sistema web desenvolvido para apoiar a gestão de uma loja de roupas consignadas, reunindo controle de fornecedores, estoque, vendas e acompanhamento financeiro em uma única aplicação.
